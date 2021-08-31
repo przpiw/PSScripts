@@ -1,0 +1,2 @@
+firstname,lastname,password,ou
+John2,Doe,12345678,"OU=Students,DC=mydc,DC=sch"
