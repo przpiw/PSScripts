@@ -1,6 +1,5 @@
-#Your OU
+#Update OU
 $OU = "OU=Staff,OU=ADKRPS Users,DC=kellerrdps,DC=sch"
-#Log File Path
 $logfile = "C:\temp\pslogs.txt"
 
 
@@ -14,7 +13,7 @@ function replaceUPN{
     $users = Get-ADUser -Filter {UserPrincipalName -Like "* *"} -SearchBase $OU
     foreach($user in $users){
         Set-ADUser $user -userPrincipalName ($user.UserPrincipalName -replace '\s+',$replaceWith)
-        $result =  ("Replaced UPN " + $user.UserPrincipalName + " with "+  ($user.UserPrincipalName -replace '\s+',"."))
+        $result =  ("Replaced UPN " + $user.UserPrincipalName + " with "+  ($user.UserPrincipalName -replace '\s+',"$replaceWith"))
         $result |Out-File $logfile -Append
     }
 }
@@ -24,7 +23,7 @@ function replaceSAM{
     $users = Get-ADUser -Filter {SamAccountName -Like "* *"} -SearchBase $OU | Select -ExpandProperty 'SamAccountName'
     foreach($user in $users){
         Set-ADUser $user -SamAccountName ($user -replace '\s+', $replaceWith)
-        $result =  ("Replaced UPN " + $user + " with "+  ($user  -replace '\s+',"."))
+        $result =  ("Replaced UPN " + $user + " with "+  ($user  -replace '\s+',"$replaceWith"))
         $result |Out-File $logfile -Append
     }
 }
