@@ -1,0 +1,24 @@
+$users = Import-csv C:\temp\schoolUsers.csv
+function checkIfUserInCSV {
+Param([Parameter(Position=0)][string]$first,[Parameter(Position=1)][string]$last)
+    $found = $FALSE
+    foreach ($user in $users)
+    {
+        if($first -eq $user.firstname -and $last -eq $user.surname){
+            $found = $TRUE
+            break
+        }    
+    }
+    return $found
+}
+
+
+$nonActiveUsers = Get-ADUser -Filter {Enabled -eq $TRUE}  -Properties Name,SamAccountName,LastLogonDate | Where {($_.LastLogonDate -lt (Get-Date).AddDays(-180)) -and ($_.LastLogonDate -ne $NULL)}
+
+foreach( $user in $nonActiveUsers){
+    $firstname = $user.givenname
+    $surname = $user.surname 
+    $result = checkIfUserInCSV -first $firstname -last $surname
+    $output = $firstname + " " + $surname + " Not found"
+    if(!$result) {Write-Host $output} 
+}
